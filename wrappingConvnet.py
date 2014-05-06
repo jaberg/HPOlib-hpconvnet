@@ -52,9 +52,12 @@ def wrapping_convnet(params, **kwargs):
         print "Memo[node]:", memo[node]
         print "Value", value
     space = hyperopt.pyll.as_apply(space)
-    ctrl = hyperopt.Ctrl(None, current_trial={})
-    print ctrl, vars(ctrl)
-    rval = hpconvnet.cifar10.uslm_eval(space, memo, ctrl)
+    ctrl = hyperopt.Ctrl(None, current_trial=None)
+    memo[hyperopt.Domain.pyll_ctrl] = ctrl
+    rval = hpconvnet.cifar10.uslm_eval(
+        space, memo, ctrl,
+        #data_fraction=0.05, # -- uncomment to run quick debug jobs
+        )
     print rval
     return rval
 
@@ -72,5 +75,5 @@ if __name__ == "__main__":
     result = main(params, **args)
     duration = time.time() - starttime
     print "Result for ParamILS: %s, %f, 1, %f, %d, %s" % \
-        ("SAT", abs(duration), result, -1, str(__file__))
+        ("SAT", abs(duration), result['loss'], -1, str(__file__))
 
